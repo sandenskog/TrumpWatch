@@ -1,15 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
+import type { ReactNode } from "react";
 
 interface GaugeMeterProps {
   label: string;
   value: number;
   color: string;
-  emoji: string;
+  icon: ReactNode;
 }
 
-export function GaugeMeter({ label, value, color, emoji }: GaugeMeterProps) {
+export function GaugeMeter({ label, value, color, icon }: GaugeMeterProps) {
   const circumference = 2 * Math.PI * 45;
   const progress = (value / 100) * circumference;
 
@@ -40,7 +41,9 @@ export function GaugeMeter({ label, value, color, emoji }: GaugeMeterProps) {
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl">{emoji}</span>
+          <span className="flex items-center justify-center" style={{ color }}>
+            {icon}
+          </span>
           <motion.span
             className="text-2xl font-black tabular-nums"
             style={{ color }}

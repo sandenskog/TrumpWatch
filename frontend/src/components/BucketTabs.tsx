@@ -1,12 +1,17 @@
 "use client";
 
 import { motion } from "framer-motion";
+import GlobeIcon from "@/icons/globe-icon";
+import TriangleAlertIcon from "@/icons/triangle-alert-icon";
+import AngryIcon from "@/icons/angry-icon";
+import PartyPopperIcon from "@/icons/party-popper-icon";
+import type { ReactNode } from "react";
 
-const tabs = [
-  { id: "all", label: "All", emoji: "\u{1F30D}" },
-  { id: "scary", label: "Scary", emoji: "\u{1F631}" },
-  { id: "crazy", label: "Crazy", emoji: "\u{1F92A}" },
-  { id: "happy", label: "Happy", emoji: "\u{1F389}" },
+const tabs: { id: string; label: string; icon: ReactNode }[] = [
+  { id: "all", label: "All Stories", icon: <GlobeIcon size={16} /> },
+  { id: "scary", label: "Scary", icon: <TriangleAlertIcon size={16} color="#dc2626" /> },
+  { id: "crazy", label: "Crazy", icon: <AngryIcon size={16} color="#ea580c" /> },
+  { id: "happy", label: "Happy", icon: <PartyPopperIcon size={16} color="#16a34a" /> },
 ];
 
 interface BucketTabsProps {
@@ -16,12 +21,12 @@ interface BucketTabsProps {
 
 export function BucketTabs({ active, onChange }: BucketTabsProps) {
   return (
-    <div className="flex gap-1.5 p-1 bg-neutral-100 rounded-xl w-fit mx-auto">
+    <div className="flex gap-1 p-1 bg-neutral-100 rounded-xl w-fit mx-auto">
       {tabs.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onChange(tab.id)}
-          className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+          className={`relative flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
             active === tab.id ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"
           }`}
         >
@@ -32,8 +37,9 @@ export function BucketTabs({ active, onChange }: BucketTabsProps) {
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
             />
           )}
-          <span className="relative z-10">
-            {tab.emoji} {tab.label}
+          <span className="relative z-10 flex items-center gap-1.5">
+            {tab.icon}
+            {tab.label}
           </span>
         </button>
       ))}
