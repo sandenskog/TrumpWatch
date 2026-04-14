@@ -5,6 +5,7 @@ Classifies articles into buckets and generates satirical one-liners.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import httpx
@@ -42,6 +43,9 @@ Respond with JSON:
   "oneliner": "witty summary sentence"
 }}"""
 
+MAX_RETRIES = 3
+RETRY_BASE_DELAY = 2.0
+
 
 async def categorize_article(title: str, summary: str, source: str) -> dict | None:
     if not GEMINI_API_KEY:
@@ -51,36 +55,46 @@ async def categorize_article(title: str, summary: str, source: str) -> dict | No
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
 
     async with httpx.AsyncClient(timeout=30) as client:
-        try:
-            resp = await client.post(url, json={
-                "contents": [
-                    {"role": "user", "parts": [{"text": SYSTEM_PROMPT + "\n\n" + USER_TEMPLATE.format(
-                        title=title, summary=summary or "", source=source
-                    )}]}
-                ],
-                "generationConfig": {
-                    "temperature": 0.7,
-                    "maxOutputTokens": 500,
-                    "responseMimeType": "application/json",
-                },
-            })
-            resp.raise_for_status()
-            data = resp.json()
-            content = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-            if content.startswith("```"):
-                content = content.split("\n", 1)[1].rsplit("```", 1)[0]
-            return json.loads(content)
-        except Exception as e:
-            print(f"  LLM categorization failed: {e}")
-            return None
+        for attempt in range(MAX_RETRIES):
+            try:
+                resp = await client.post(url, json={
+                    "contents": [
+                        {"role": "user", "parts": [{"text": SYSTEM_PROMPT + "\n\n" + USER_TEMPLATE.format(
+                            title=title, summary=summary or "", source=source
+                        )}]}
+                    ],
+                    "generationConfig": {
+                        "temperature": 0.7,
+                        "maxOutputTokens": 500,
+                        "responseMimeType": "application/json",
+                    },
+                })
+                if resp.status_code in (429, 503):
+                    delay = RETRY_BASE_DELAY * (2 ** attempt)
+                    await asyncio.sleep(delay)
+                    continue
+                resp.raise_for_status()
+                data = resp.json()
+                content = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                if content.startswith("```"):
+                    content = content.split("\n", 1)[1].rsplit("```", 1)[0]
+                return json.loads(content)
+            except (httpx.HTTPStatusError, KeyError, json.JSONDecodeError) as e:
+                if attempt < MAX_RETRIES - 1:
+                    await asyncio.sleep(RETRY_BASE_DELAY * (2 ** attempt))
+                    continue
+                print(f"  LLM categorization failed after {MAX_RETRIES} attempts: {e}")
+                return None
+            except Exception as e:
+                print(f"  LLM categorization failed: {e}")
+                return None
+    return None
 
 
 async def categorize_batch(articles: list[dict]) -> list[dict]:
     """Categorize a batch of articles. Returns only Trump-related ones."""
-    import asyncio
-
     results = []
-    semaphore = asyncio.Semaphore(5)
+    semaphore = asyncio.Semaphore(2)
 
     async def process(article):
         async with semaphore:
