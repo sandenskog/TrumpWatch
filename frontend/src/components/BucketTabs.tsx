@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import GlobeIcon from "@/icons/globe-icon";
 import TriangleAlertIcon from "@/icons/triangle-alert-icon";
-import AngryIcon from "@/icons/angry-icon";
-import PartyPopperIcon from "@/icons/party-popper-icon";
+import FlameIcon from "@/icons/flame-icon";
+import DollarIcon from "@/icons/dollar-icon";
+import WorldIcon from "@/icons/world-icon";
+import SparklesIcon from "@/icons/sparkles-icon";
 import type { ReactNode } from "react";
 
 const tabs: {
@@ -16,7 +18,7 @@ const tabs: {
 }[] = [
   {
     id: "all",
-    label: "All Stories",
+    label: "All",
     icon: <GlobeIcon size={16} />,
     activeColor: "#ffffff",
     activeBg: "#1A1A1A",
@@ -29,16 +31,30 @@ const tabs: {
     activeBg: "#B91C1C",
   },
   {
-    id: "crazy",
-    label: "Crazy",
-    icon: <AngryIcon size={16} />,
+    id: "chaos",
+    label: "Chaos",
+    icon: <FlameIcon size={16} />,
     activeColor: "#ffffff",
     activeBg: "#C2410C",
   },
   {
-    id: "happy",
-    label: "Happy",
-    icon: <PartyPopperIcon size={16} />,
+    id: "grift",
+    label: "Grift",
+    icon: <DollarIcon size={16} />,
+    activeColor: "#ffffff",
+    activeBg: "#B45309",
+  },
+  {
+    id: "cringe",
+    label: "Cringe",
+    icon: <WorldIcon size={16} />,
+    activeColor: "#ffffff",
+    activeBg: "#7C3AED",
+  },
+  {
+    id: "hope",
+    label: "Hope",
+    icon: <SparklesIcon size={16} />,
     activeColor: "#ffffff",
     activeBg: "#15803D",
   },
@@ -51,14 +67,14 @@ interface BucketTabsProps {
 
 export function BucketTabs({ active, onChange }: BucketTabsProps) {
   return (
-    <div className="flex gap-0 border border-[var(--color-rule)] bg-[var(--color-parchment)]">
+    <div className="flex gap-0 border border-[var(--color-rule)] bg-[var(--color-parchment)] overflow-x-auto">
       {tabs.map((tab) => {
         const isActive = active === tab.id;
         return (
           <button
             key={tab.id}
             onClick={() => onChange(tab.id)}
-            className="relative flex items-center gap-1.5 px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors"
+            className="relative flex items-center gap-1 px-2.5 sm:px-4 py-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-colors whitespace-nowrap"
             style={{
               color: isActive ? tab.activeColor : "#8B7E6E",
               background: isActive ? tab.activeBg : "transparent",
@@ -72,12 +88,9 @@ export function BucketTabs({ active, onChange }: BucketTabsProps) {
                 transition={{ type: "spring", stiffness: 500, damping: 35 }}
               />
             )}
-            <span className="relative z-10 flex items-center gap-1.5">
+            <span className="relative z-10 flex items-center gap-1">
               {tab.icon}
               <span className="hidden sm:inline">{tab.label}</span>
-              <span className="sm:hidden">
-                {tab.id === "all" ? "All" : tab.label}
-              </span>
             </span>
           </button>
         );

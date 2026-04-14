@@ -1,6 +1,6 @@
 """
 LLM-based article categorization using Google Gemini Flash API.
-Classifies articles into buckets and generates satirical one-liners.
+Classifies articles into 5 buckets and generates satirical one-liners.
 """
 
 from __future__ import annotations
@@ -18,11 +18,13 @@ SYSTEM_PROMPT = """You are a satirical news editor for "Trump Watch" — a funny
 For each article, you must:
 1. Decide if it's Trump-related (directly or indirectly about Trump, his administration, MAGA movement, or their impact)
 2. If yes, categorize it into one of these buckets:
-   - "scary": Authoritarian moves, democracy threats, election interference, power grabs
-   - "crazy": Bizarre statements, absurd policy, wild behavior, incompetence
-   - "happy": Wins against Trump (court losses, blocked policies, international mockery, resistance wins)
+   - "scary": Threats to democracy & global stability — military threats, authoritarian moves, election interference, firing oversight officials, attacking courts/press
+   - "chaos": Administrative dysfunction — contradictory orders, staff firings, policy reversals, unhinged social media rants, incompetent appointments, internal backstabbing
+   - "grift": Self-dealing & corruption — Mar-a-Lago deals, family profiting from office, donor favors, crypto schemes, $TRUMP coin, conflicts of interest, pay-to-play
+   - "cringe": International embarrassment — insulting allies, embarrassing summits, getting mocked by foreign leaders, pulling out of treaties, making the US look foolish abroad
+   - "hope": Resistance & accountability wins — court victories blocking Trump, successful protests, bipartisan pushback, investigative journalism wins, election results against MAGA
    - "neutral": Trump-related but doesn't fit above buckets well
-3. Rate intensity 0-100 (how scary/crazy/happy is this story?)
+3. Rate intensity 0-100 (how intensely does this fit the bucket?)
 4. Write a funny one-liner headline in the style of a satirical news show
 5. Write a witty 1-sentence summary
 
@@ -37,7 +39,7 @@ Summary: {summary}
 Respond with JSON:
 {{
   "trump_related": true/false,
-  "bucket": "scary"|"crazy"|"happy"|"neutral"|null,
+  "bucket": "scary"|"chaos"|"grift"|"cringe"|"hope"|"neutral"|null,
   "score": 0-100,
   "headline": "funny one-liner headline",
   "oneliner": "witty summary sentence"
@@ -49,7 +51,7 @@ RETRY_BASE_DELAY = 2.0
 
 async def categorize_article(title: str, summary: str, source: str) -> dict | None:
     if not GEMINI_API_KEY:
-        return {"trump_related": True, "bucket": "crazy", "score": 50,
+        return {"trump_related": True, "bucket": "chaos", "score": 50,
                 "headline": title, "oneliner": summary or title}
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
 Main scraper entrypoint. Run daily via cron or manually.
-Fetches feeds -> categorizes via LLM -> stores in SQLite -> updates gauges.
+Fetches feeds -> categorizes via LLM -> stores in SQLite -> updates gauges -> snapshots history.
 """
 
 import asyncio
 import sys
 from datetime import datetime
 
-from db import init_db, get_db, article_exists, insert_article, update_gauges
+from db import init_db, migrate_db, get_db, article_exists, insert_article, update_gauges, snapshot_gauges
 from fetch_feeds import fetch_all_feeds
 from categorize import categorize_batch
 
@@ -17,6 +17,7 @@ async def main():
     print(f"=== Trump Diary Scraper — {datetime.utcnow().isoformat()} ===")
 
     init_db()
+    migrate_db()
 
     articles = await fetch_all_feeds()
     if not articles:
@@ -30,6 +31,7 @@ async def main():
     if not new_articles:
         print("No new articles. Updating gauges and exiting.")
         update_gauges(conn)
+        snapshot_gauges(conn)
         conn.close()
         return
 
@@ -49,6 +51,7 @@ async def main():
         conn.commit()
 
     update_gauges(conn)
+    snapshot_gauges(conn)
     conn.close()
 
     print(f"Done. Stored {total_stored} Trump-related articles.")

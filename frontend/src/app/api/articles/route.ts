@@ -19,7 +19,7 @@ export function GET(req: NextRequest) {
   `;
   const params: (string | number)[] = [];
 
-  if (bucket && ["scary", "crazy", "happy", "neutral"].includes(bucket)) {
+  if (bucket && ["scary", "chaos", "grift", "cringe", "hope", "neutral"].includes(bucket)) {
     query += " AND bucket = ?";
     params.push(bucket);
   }

@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import type { Article } from "@/lib/db";
 import TriangleAlertIcon from "@/icons/triangle-alert-icon";
-import AngryIcon from "@/icons/angry-icon";
-import PartyPopperIcon from "@/icons/party-popper-icon";
+import FlameIcon from "@/icons/flame-icon";
+import DollarIcon from "@/icons/dollar-icon";
+import WorldIcon from "@/icons/world-icon";
+import SparklesIcon from "@/icons/sparkles-icon";
 import GlobeIcon from "@/icons/globe-icon";
 import type { ReactNode } from "react";
 
@@ -25,18 +27,32 @@ const bucketConfig: Record<
     label: "SCARY",
     borderColor: "#B91C1C",
   },
-  crazy: {
-    icon: <AngryIcon size={12} color="#C2410C" />,
+  chaos: {
+    icon: <FlameIcon size={12} color="#C2410C" />,
     color: "#C2410C",
     bg: "#FFEDD5",
-    label: "CRAZY",
+    label: "CHAOS",
     borderColor: "#C2410C",
   },
-  happy: {
-    icon: <PartyPopperIcon size={12} color="#15803D" />,
+  grift: {
+    icon: <DollarIcon size={12} color="#B45309" />,
+    color: "#B45309",
+    bg: "#FEF3C7",
+    label: "GRIFT",
+    borderColor: "#B45309",
+  },
+  cringe: {
+    icon: <WorldIcon size={12} color="#7C3AED" />,
+    color: "#7C3AED",
+    bg: "#EDE9FE",
+    label: "CRINGE",
+    borderColor: "#7C3AED",
+  },
+  hope: {
+    icon: <SparklesIcon size={12} color="#15803D" />,
     color: "#15803D",
     bg: "#DCFCE7",
-    label: "HAPPY",
+    label: "HOPE",
     borderColor: "#15803D",
   },
   neutral: {

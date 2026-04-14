@@ -9,6 +9,8 @@ The ultimate daily satirical dashboard for English-speaking citizens counting do
 - **Domain:** trumpwatch.live
 - **Stack:** Next.js + Tailwind (frontend), Python (scraper pipeline), SQLite (content DB), Resend (email)
 - **Container:** trumpdiary
+- **GA4:** G-W19ZZ2T1X9
+- **GSC:** sc-domain:trumpwatch.live
 
 ## Architecture
 

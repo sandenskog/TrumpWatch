@@ -24,7 +24,7 @@ export interface Article {
   source_category: string;
   published_at: string | null;
   scraped_at: string;
-  bucket: "scary" | "crazy" | "happy" | "neutral";
+  bucket: "scary" | "chaos" | "grift" | "cringe" | "hope" | "neutral";
   score: number;
   image_url: string | null;
   llm_headline: string | null;
@@ -36,4 +36,7 @@ export interface Gauge {
   label: string;
   value: number;
   updated_at: string;
+  trend?: number;
+  trend_direction?: "up" | "down" | "flat";
+  explainer?: string;
 }

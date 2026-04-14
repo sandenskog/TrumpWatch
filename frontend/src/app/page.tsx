@@ -8,9 +8,10 @@ import { StoryCard } from "@/components/StoryCard";
 import { EmailSignup } from "@/components/EmailSignup";
 import { BucketTabs } from "@/components/BucketTabs";
 import TriangleAlertIcon from "@/icons/triangle-alert-icon";
-import AngryIcon from "@/icons/angry-icon";
-import SparklesIcon from "@/icons/sparkles-icon";
 import FlameIcon from "@/icons/flame-icon";
+import DollarIcon from "@/icons/dollar-icon";
+import WorldIcon from "@/icons/world-icon";
+import SparklesIcon from "@/icons/sparkles-icon";
 import GlobeIcon from "@/icons/globe-icon";
 import type { Article, Gauge } from "@/lib/db";
 
@@ -21,6 +22,39 @@ function StarDecoration() {
     </svg>
   );
 }
+
+const GAUGE_CONFIG = [
+  {
+    id: "scare",
+    label: "Scare-O-Meter",
+    color: "#B91C1C",
+    icon: <TriangleAlertIcon size={20} color="white" />,
+  },
+  {
+    id: "chaos",
+    label: "Chaos Index",
+    color: "#C2410C",
+    icon: <FlameIcon size={20} color="white" />,
+  },
+  {
+    id: "grift",
+    label: "Grift Gauge",
+    color: "#B45309",
+    icon: <DollarIcon size={20} color="white" />,
+  },
+  {
+    id: "cringe",
+    label: "World Cringe",
+    color: "#7C3AED",
+    icon: <WorldIcon size={20} color="white" />,
+  },
+  {
+    id: "hope",
+    label: "Hope-O-Meter",
+    color: "#15803D",
+    icon: <SparklesIcon size={20} color="white" />,
+  },
+];
 
 export default function Dashboard() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -51,10 +85,6 @@ export default function Dashboard() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  const scare = gauges.scare?.value ?? 50;
-  const crazy = gauges.crazy?.value ?? 50;
-  const hope = gauges.hope?.value ?? 50;
 
   return (
     <div className="min-h-screen bg-[var(--color-cream)]">
@@ -140,28 +170,23 @@ export default function Dashboard() {
             <div className="h-px flex-1 bg-[var(--color-rule)]" />
           </div>
 
-          <div className="grid grid-cols-3 gap-3 sm:gap-6">
-            <GaugeMeter
-              label="Scare-O-Meter"
-              value={scare}
-              color="#B91C1C"
-              bgColor="#B91C1C"
-              icon={<TriangleAlertIcon size={24} color="white" />}
-            />
-            <GaugeMeter
-              label="Crazy-O-Meter"
-              value={crazy}
-              color="#C2410C"
-              bgColor="#C2410C"
-              icon={<AngryIcon size={24} color="white" />}
-            />
-            <GaugeMeter
-              label="Hope-O-Meter"
-              value={hope}
-              color="#15803D"
-              bgColor="#15803D"
-              icon={<SparklesIcon size={24} color="white" />}
-            />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
+            {GAUGE_CONFIG.map((cfg) => {
+              const g = gauges[cfg.id];
+              return (
+                <GaugeMeter
+                  key={cfg.id}
+                  label={cfg.label}
+                  value={g?.value ?? 50}
+                  color={cfg.color}
+                  bgColor={cfg.color}
+                  icon={cfg.icon}
+                  trend={g?.trend}
+                  trendDirection={g?.trend_direction}
+                  explainer={g?.explainer}
+                />
+              );
+            })}
           </div>
         </motion.section>
 
