@@ -8,40 +8,43 @@ import PartyPopperIcon from "@/icons/party-popper-icon";
 import GlobeIcon from "@/icons/globe-icon";
 import type { ReactNode } from "react";
 
-const bucketConfig: Record<string, {
-  icon: ReactNode;
-  accent: string;
-  badge: string;
-  label: string;
-  border: string;
-}> = {
+const bucketConfig: Record<
+  string,
+  {
+    icon: ReactNode;
+    color: string;
+    bg: string;
+    label: string;
+    borderColor: string;
+  }
+> = {
   scary: {
-    icon: <TriangleAlertIcon size={14} color="#dc2626" />,
-    accent: "#dc2626",
-    badge: "bg-red-100 text-red-700",
+    icon: <TriangleAlertIcon size={12} color="#B91C1C" />,
+    color: "#B91C1C",
+    bg: "#FEE2E2",
     label: "SCARY",
-    border: "border-l-red-500",
+    borderColor: "#B91C1C",
   },
   crazy: {
-    icon: <AngryIcon size={14} color="#ea580c" />,
-    accent: "#ea580c",
-    badge: "bg-orange-100 text-orange-700",
+    icon: <AngryIcon size={12} color="#C2410C" />,
+    color: "#C2410C",
+    bg: "#FFEDD5",
     label: "CRAZY",
-    border: "border-l-orange-500",
+    borderColor: "#C2410C",
   },
   happy: {
-    icon: <PartyPopperIcon size={14} color="#16a34a" />,
-    accent: "#16a34a",
-    badge: "bg-green-100 text-green-700",
+    icon: <PartyPopperIcon size={12} color="#15803D" />,
+    color: "#15803D",
+    bg: "#DCFCE7",
     label: "HAPPY",
-    border: "border-l-green-500",
+    borderColor: "#15803D",
   },
   neutral: {
-    icon: <GlobeIcon size={14} color="#737373" />,
-    accent: "#737373",
-    badge: "bg-neutral-100 text-neutral-600",
+    icon: <GlobeIcon size={12} color="#8B7E6E" />,
+    color: "#8B7E6E",
+    bg: "#F5EBDA",
     label: "NEWS",
-    border: "border-l-neutral-400",
+    borderColor: "#D6C9B6",
   },
 };
 
@@ -56,64 +59,93 @@ function extractDomain(url: string): string {
 interface StoryCardProps {
   article: Article;
   index: number;
+  isLead?: boolean;
 }
 
-export function StoryCard({ article, index }: StoryCardProps) {
+export function StoryCard({ article, index, isLead }: StoryCardProps) {
   const config = bucketConfig[article.bucket] || bucketConfig.neutral;
   const domain = extractDomain(article.url);
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04, duration: 0.3 }}
-      className={`border-l-4 ${config.border} bg-white hover:bg-neutral-50 transition-colors`}
+      transition={{ delay: index * 0.03, duration: 0.3 }}
+      className="group"
+      style={{ borderTop: index === 0 ? "none" : `1px solid var(--color-rule)` }}
     >
-      <div className="pl-4 pr-3 py-3">
-        {/* Top line: badge + source + score */}
-        <div className="flex items-center gap-2 mb-1.5">
-          <span className={`inline-flex items-center gap-1 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full ${config.badge}`}>
+      <div className={`py-4 ${isLead ? "pb-5" : ""}`}>
+        {/* Category + Source line */}
+        <div className="flex items-center gap-2 mb-2">
+          <span
+            className="inline-flex items-center gap-1 text-[10px] font-bold tracking-[0.15em] uppercase px-2 py-0.5"
+            style={{
+              color: config.color,
+              background: config.bg,
+              border: `1px solid ${config.borderColor}`,
+            }}
+          >
             {config.icon}
             {config.label}
           </span>
-          <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wide">
+          <span className="text-[10px] text-[#8B7E6E] font-semibold uppercase tracking-wider">
             {article.source_name}
           </span>
-          <span className="ml-auto text-[10px] font-bold tabular-nums" style={{ color: config.accent }}>
+          <span
+            className="ml-auto text-[10px] font-bold tabular-nums font-sans"
+            style={{ color: config.color }}
+          >
             {article.score}/100
           </span>
         </div>
 
         {/* Headline */}
-        <h3 className="font-bold text-base leading-snug text-neutral-900 mb-1 font-serif">
-          {article.llm_headline || article.title}
+        <h3
+          className={`font-playfair font-bold leading-snug text-[var(--color-ink)] mb-1.5 group-hover:text-[var(--color-crimson)] transition-colors ${
+            isLead
+              ? "text-2xl sm:text-3xl"
+              : "text-lg sm:text-xl"
+          }`}
+        >
+          <a
+            href={article.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline decoration-2 underline-offset-2"
+          >
+            {article.llm_headline || article.title}
+          </a>
         </h3>
 
-        {/* Lead / one-liner */}
+        {/* Lead paragraph */}
         {article.llm_oneliner && (
-          <p className="text-sm text-neutral-600 leading-relaxed mb-2">
+          <p
+            className={`font-serif leading-relaxed text-[var(--color-ink-light)] mb-2 ${
+              isLead ? "text-base sm:text-lg" : "text-sm sm:text-base"
+            }`}
+          >
             {article.llm_oneliner}
           </p>
         )}
 
-        {/* Read more link */}
+        {/* Read more */}
         <a
           href={article.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs font-medium text-neutral-500 hover:text-neutral-900 transition-colors group"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#8B7E6E] hover:text-[var(--color-crimson)] transition-colors"
         >
-          Read more at {domain}
+          Read full story at {domain}
           <svg
             width="12"
             height="12"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="opacity-0 group-hover:opacity-100 transition-opacity -translate-x-1 group-hover:translate-x-0 transition-transform"
+            className="opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0"
           >
             <path d="M7 17L17 7" />
             <path d="M7 7h10v10" />

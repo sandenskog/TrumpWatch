@@ -7,13 +7,20 @@ import { GaugeMeter } from "@/components/GaugeMeter";
 import { StoryCard } from "@/components/StoryCard";
 import { EmailSignup } from "@/components/EmailSignup";
 import { BucketTabs } from "@/components/BucketTabs";
-import { TrumpLogo } from "@/components/TrumpLogo";
 import TriangleAlertIcon from "@/icons/triangle-alert-icon";
 import AngryIcon from "@/icons/angry-icon";
 import SparklesIcon from "@/icons/sparkles-icon";
-import MailFilledIcon from "@/icons/mail-filled-icon";
+import FlameIcon from "@/icons/flame-icon";
 import GlobeIcon from "@/icons/globe-icon";
 import type { Article, Gauge } from "@/lib/db";
+
+function StarDecoration() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    </svg>
+  );
+}
 
 export default function Dashboard() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -50,152 +57,176 @@ export default function Dashboard() {
   const hope = gauges.hope?.value ?? 50;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--color-cream)]">
+      {/* Red accent stripe */}
+      <div className="h-1.5 bg-[var(--color-crimson)]" />
+
       {/* Masthead */}
-      <header className="border-b-2 border-neutral-900">
-        <div className="max-w-4xl mx-auto px-4 py-5">
-          <div className="flex items-center justify-center gap-4">
-            <TrumpLogo size={56} />
-            <div className="text-center">
-              <motion.h1
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-4xl sm:text-5xl font-black tracking-tight uppercase"
-                style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-              >
-                TRUMP WATCH
-              </motion.h1>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="flex items-center justify-center gap-2 mt-0.5"
-              >
-                <div className="h-px flex-1 bg-neutral-300" />
-                <p className="text-neutral-500 text-xs tracking-widest uppercase font-medium">
-                  Tracking Democracy&apos;s Wildest Ride
-                </p>
-                <div className="h-px flex-1 bg-neutral-300" />
-              </motion.div>
-            </div>
-            <TrumpLogo size={56} />
-          </div>
-          <div className="text-center mt-2">
-            <span className="text-[10px] text-neutral-400 tracking-wider uppercase">
+      <header className="max-w-5xl mx-auto px-4 pt-6 pb-4">
+        <div className="text-center">
+          {/* Edition line */}
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="h-px flex-1 max-w-20 bg-[var(--color-rule)]" />
+            <span className="text-[10px] text-[#8B7E6E] tracking-[0.25em] uppercase font-semibold">
               {new Date().toLocaleDateString("en-US", {
                 weekday: "long",
                 year: "numeric",
                 month: "long",
                 day: "numeric",
               })}
+              {" · Vol. II"}
             </span>
+            <div className="h-px flex-1 max-w-20 bg-[var(--color-rule)]" />
           </div>
+
+          {/* Title */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="flex items-center justify-center gap-3 text-[var(--color-crimson)]">
+              <StarDecoration />
+              <StarDecoration />
+              <StarDecoration />
+            </div>
+            <h1 className="font-playfair text-6xl sm:text-7xl md:text-8xl font-black tracking-tight text-[var(--color-ink)] mt-1 mb-1">
+              TRUMP WATCH
+            </h1>
+            <div className="flex items-center justify-center gap-3 text-[var(--color-crimson)]">
+              <StarDecoration />
+              <StarDecoration />
+              <StarDecoration />
+            </div>
+          </motion.div>
+
+          {/* Tagline */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="font-serif text-sm sm:text-base text-[#8B7E6E] mt-2 italic"
+          >
+            Tracking Democracy&apos;s Wildest Ride Since 2025
+          </motion.p>
         </div>
+
+        {/* Heavy rule under masthead */}
+        <div className="rule-double mt-4" />
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-8 space-y-10">
-        {/* Countdown */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="py-8 px-6 bg-neutral-50 rounded-2xl border border-neutral-100"
-        >
-          <CountdownTimer />
-        </motion.section>
+      {/* Countdown Banner */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="bg-[var(--color-crimson-dark)] py-8 sm:py-10"
+      >
+        <CountdownTimer />
+      </motion.section>
 
-        {/* Gauges */}
+      <main className="max-w-5xl mx-auto px-4">
+        {/* Gauges Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
+          className="py-8"
         >
-          <div className="flex justify-center gap-8 sm:gap-16 flex-wrap">
+          <div className="flex items-center gap-3 mb-6">
+            <FlameIcon size={18} />
+            <h2 className="font-playfair text-xl font-bold uppercase tracking-wider">
+              Today&apos;s Meters
+            </h2>
+            <div className="h-px flex-1 bg-[var(--color-rule)]" />
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 sm:gap-6">
             <GaugeMeter
               label="Scare-O-Meter"
               value={scare}
-              color="#dc2626"
-              icon={<TriangleAlertIcon size={22} />}
+              color="#B91C1C"
+              bgColor="#B91C1C"
+              icon={<TriangleAlertIcon size={24} color="white" />}
             />
             <GaugeMeter
               label="Crazy-O-Meter"
               value={crazy}
-              color="#ea580c"
-              icon={<AngryIcon size={22} />}
+              color="#C2410C"
+              bgColor="#C2410C"
+              icon={<AngryIcon size={24} color="white" />}
             />
             <GaugeMeter
               label="Hope-O-Meter"
               value={hope}
-              color="#16a34a"
-              icon={<SparklesIcon size={22} />}
+              color="#15803D"
+              bgColor="#15803D"
+              icon={<SparklesIcon size={24} color="white" />}
             />
           </div>
         </motion.section>
 
-        {/* Email Signup */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="text-center space-y-3 py-6 px-4 bg-neutral-50 rounded-2xl border border-neutral-100"
-        >
-          <div className="flex items-center justify-center gap-2">
-            <MailFilledIcon size={20} />
-            <h2 className="text-lg font-bold">Never miss a day of chaos</h2>
-          </div>
-          <p className="text-sm text-neutral-500">
-            Get the daily digest delivered to your inbox. It&apos;s free, funny,
-            and slightly terrifying.
-          </p>
-          <EmailSignup />
-        </motion.section>
+        <div className="rule-heavy" />
 
-        {/* Stories */}
-        <section>
-          <div className="flex flex-col items-center gap-4 mb-6">
+        {/* Headlines Section */}
+        <section className="py-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
             <div className="flex items-center gap-3">
-              <div className="h-px w-12 bg-neutral-300" />
-              <h2 className="text-xl font-bold uppercase tracking-wider" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+              <GlobeIcon size={18} />
+              <h2 className="font-playfair text-xl font-bold uppercase tracking-wider whitespace-nowrap">
                 Today&apos;s Headlines
               </h2>
-              <div className="h-px w-12 bg-neutral-300" />
             </div>
+            <div className="hidden sm:block h-px flex-1 bg-[var(--color-rule)]" />
             <BucketTabs active={bucket} onChange={setBucket} />
           </div>
 
           {loading ? (
-            <div className="text-center py-12 text-neutral-400">
+            <div className="text-center py-16 text-[#8B7E6E] font-serif italic">
               Loading stories...
             </div>
           ) : articles.length === 0 ? (
-            <div className="text-center py-12">
-              <span className="inline-flex text-neutral-300 mb-2">
-                <GlobeIcon size={40} />
+            <div className="text-center py-16">
+              <span className="inline-flex text-[var(--color-rule)]">
+                <GlobeIcon size={48} />
               </span>
-              <p className="text-neutral-500 text-sm">
+              <p className="text-[#8B7E6E] text-sm font-serif italic mt-3">
                 No stories yet. The scraper runs daily — check back soon!
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-neutral-100">
+            <div>
               {articles.map((article, i) => (
-                <StoryCard key={article.id} article={article} index={i} />
+                <StoryCard
+                  key={article.id}
+                  article={article}
+                  index={i}
+                  isLead={i === 0}
+                />
               ))}
             </div>
           )}
         </section>
+      </main>
 
-        {/* Footer */}
-        <footer className="text-center py-8 border-t-2 border-neutral-900">
-          <p className="text-xs text-neutral-400 tracking-wide">
+      {/* Email Signup Banner */}
+      <EmailSignup />
+
+      {/* Footer */}
+      <footer className="max-w-5xl mx-auto px-4 py-8">
+        <div className="rule-light mb-4" />
+        <div className="text-center">
+          <p className="text-xs text-[#8B7E6E] tracking-wide font-serif">
             Aggregating from 60+ sources across satire, progressive news,
             international outlets, legal watchers, and political commentary.
           </p>
-          <p className="text-xs text-neutral-300 mt-1">
+          <p className="text-[10px] text-[var(--color-rule)] mt-2 font-serif italic">
             Built with outrage, humor, and a countdown timer.
           </p>
-        </footer>
-      </main>
+        </div>
+      </footer>
+
+      {/* Bottom red stripe */}
+      <div className="h-1.5 bg-[var(--color-crimson)]" />
     </div>
   );
 }

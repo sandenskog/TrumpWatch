@@ -23,18 +23,29 @@ function calcTimeLeft(): TimeLeft {
   };
 }
 
-function CountdownUnit({ value, label }: { value: number; label: string }) {
+function CountdownUnit({
+  value,
+  label,
+  wide,
+}: {
+  value: number;
+  label: string;
+  wide?: boolean;
+}) {
   return (
     <div className="flex flex-col items-center">
       <motion.div
         key={value}
-        initial={{ y: -10, opacity: 0 }}
+        initial={{ y: -8, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="text-4xl sm:text-5xl md:text-6xl font-black tabular-nums tracking-tight"
+        transition={{ duration: 0.15 }}
+        className={`font-playfair font-black tabular-nums tracking-tight text-white ${
+          wide ? "text-5xl sm:text-7xl md:text-8xl" : "text-4xl sm:text-6xl md:text-7xl"
+        }`}
       >
-        {String(value).padStart(label === "DAYS" ? 3 : 2, "0")}
+        {String(value).padStart(wide ? 3 : 2, "0")}
       </motion.div>
-      <span className="text-[10px] font-bold tracking-[0.2em] text-neutral-400 mt-1">
+      <span className="text-[10px] sm:text-xs font-bold tracking-[0.25em] text-red-300/80 mt-1 uppercase">
         {label}
       </span>
     </div>
@@ -52,7 +63,7 @@ export function CountdownTimer() {
 
   if (!time) {
     return (
-      <div className="h-24 flex items-center justify-center text-neutral-300">
+      <div className="h-32 flex items-center justify-center text-red-300/50">
         Loading...
       </div>
     );
@@ -60,16 +71,22 @@ export function CountdownTimer() {
 
   return (
     <div className="text-center">
-      <p className="text-sm font-medium text-neutral-500 mb-4 tracking-wide uppercase">
+      <p className="text-sm font-semibold text-red-200/70 mb-5 tracking-[0.15em] uppercase font-sans">
         Days until this nightmare ends
       </p>
-      <div className="flex items-center justify-center gap-4 sm:gap-6">
-        <CountdownUnit value={time.days} label="DAYS" />
-        <span className="text-3xl font-light text-neutral-300 -mt-4">:</span>
+      <div className="flex items-center justify-center gap-3 sm:gap-5 md:gap-6">
+        <CountdownUnit value={time.days} label="DAYS" wide />
+        <span className="text-3xl sm:text-5xl font-light text-red-400/40 -mt-5 font-playfair">
+          :
+        </span>
         <CountdownUnit value={time.hours} label="HOURS" />
-        <span className="text-3xl font-light text-neutral-300 -mt-4">:</span>
+        <span className="text-3xl sm:text-5xl font-light text-red-400/40 -mt-5 font-playfair">
+          :
+        </span>
         <CountdownUnit value={time.minutes} label="MIN" />
-        <span className="text-3xl font-light text-neutral-300 -mt-4">:</span>
+        <span className="text-3xl sm:text-5xl font-light text-red-400/40 -mt-5 font-playfair">
+          :
+        </span>
         <CountdownUnit value={time.seconds} label="SEC" />
       </div>
     </div>
