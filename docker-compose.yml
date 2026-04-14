@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: trumpdiary
+    restart: unless-stopped
+    ports:
+      - "3100:3000"
+    environment:
+      - TRUMPDIARY_DB=/data/trumpdiary.db
+    volumes:
+      - ./data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.trumpdiary.rule=Host(`trumpwatch.live`)"
+      - "traefik.http.routers.trumpdiary.entrypoints=websecure"
+      - "traefik.http.routers.trumpdiary.tls.certresolver=letsencrypt"
+      - "traefik.http.services.trumpdiary.loadbalancer.server.port=3000"
+    networks:
+      - traefik-public
+
+  scraper:
+    build: ./scraper
+    container_name: trumpdiary-scraper
+    restart: "no"
+    environment:
+      - TRUMPDIARY_DB=/data/trumpdiary.db
+      - SILICONFLOW_API_KEY=${SILICONFLOW_API_KEY:-}
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+    volumes:
+      - ./data:/data
+
+  digest:
+    build: ./scraper
+    container_name: trumpdiary-digest
+    restart: "no"
+    command: python digest.py
+    environment:
+      - TRUMPDIARY_DB=/data/trumpdiary.db
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+      - SITE_URL=https://trumpwatch.live
+    volumes:
+      - ./data:/data
+
+networks:
+  traefik-public:
+    external: true

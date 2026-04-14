@@ -1,0 +1,12 @@
+node_modules/
+.next/
+data/
+.env
+*.log
+__pycache__/
+*.pyc
+.bg-shell/
+.gsd/notifications.jsonl
+.gsd/runtime/
+.gsd/activity/
+.gsd/worktrees/
