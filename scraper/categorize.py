@@ -1,6 +1,6 @@
 """
-LLM-based article categorization using OpenAI-compatible API (SiliconFlow or similar).
-Uses cheap models to classify articles into buckets and generate one-liners.
+LLM-based article categorization using Google Gemini Flash API.
+Classifies articles into buckets and generates satirical one-liners.
 """
 
 from __future__ import annotations
@@ -9,9 +9,8 @@ import json
 import os
 import httpx
 
-API_KEY = os.environ.get("SILICONFLOW_API_KEY", "")
-API_BASE = os.environ.get("LLM_API_BASE", "https://api.siliconflow.cn/v1")
-MODEL = os.environ.get("LLM_MODEL", "Qwen/Qwen2.5-7B-Instruct")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
 SYSTEM_PROMPT = """You are a satirical news editor for "Trump Watch" — a funny, entertaining anti-Trump dashboard.
 
@@ -45,30 +44,29 @@ Respond with JSON:
 
 
 async def categorize_article(title: str, summary: str, source: str) -> dict | None:
-    if not API_KEY:
+    if not GEMINI_API_KEY:
         return {"trump_related": True, "bucket": "crazy", "score": 50,
                 "headline": title, "oneliner": summary or title}
 
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
+
     async with httpx.AsyncClient(timeout=30) as client:
         try:
-            resp = await client.post(
-                f"{API_BASE}/chat/completions",
-                headers={"Authorization": f"Bearer {API_KEY}"},
-                json={
-                    "model": MODEL,
-                    "messages": [
-                        {"role": "system", "content": SYSTEM_PROMPT},
-                        {"role": "user", "content": USER_TEMPLATE.format(
-                            title=title, summary=summary or "", source=source
-                        )},
-                    ],
+            resp = await client.post(url, json={
+                "contents": [
+                    {"role": "user", "parts": [{"text": SYSTEM_PROMPT + "\n\n" + USER_TEMPLATE.format(
+                        title=title, summary=summary or "", source=source
+                    )}]}
+                ],
+                "generationConfig": {
                     "temperature": 0.7,
-                    "max_tokens": 300,
+                    "maxOutputTokens": 300,
+                    "responseMimeType": "application/json",
                 },
-            )
+            })
             resp.raise_for_status()
-            content = resp.json()["choices"][0]["message"]["content"]
-            content = content.strip()
+            data = resp.json()
+            content = data["candidates"][0]["content"]["parts"][0]["text"].strip()
             if content.startswith("```"):
                 content = content.split("\n", 1)[1].rsplit("```", 1)[0]
             return json.loads(content)

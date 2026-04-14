@@ -26,7 +26,7 @@ services:
     restart: "no"
     environment:
       - TRUMPDIARY_DB=/data/trumpdiary.db
-      - SILICONFLOW_API_KEY=${SILICONFLOW_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - RESEND_API_KEY=${RESEND_API_KEY:-}
     volumes:
       - ./data:/data
