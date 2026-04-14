@@ -10,7 +10,7 @@ import os
 import httpx
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite")
 
 SYSTEM_PROMPT = """You are a satirical news editor for "Trump Watch" — a funny, entertaining anti-Trump dashboard.
 
@@ -60,7 +60,7 @@ async def categorize_article(title: str, summary: str, source: str) -> dict | No
                 ],
                 "generationConfig": {
                     "temperature": 0.7,
-                    "maxOutputTokens": 300,
+                    "maxOutputTokens": 500,
                     "responseMimeType": "application/json",
                 },
             })
